@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kampung Kia or City Slicker?</title>
+<style>
+:root{--bg:#fff1d6;--ink:#3a2a14;--accent:#d9822b;--sel:#ffe7c2;--line:#ecd9b5}
+body.p2{--bg:#e8edf1;--ink:#1f2a33;--accent:#2f5d50;--sel:#d8e8e1;--line:#cdd6dc}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;transition:background .4s}
+.wrap{max-width:560px;margin:0 auto;padding:18px 16px 48px}
+h1,h2{font-family:Georgia,serif;line-height:1.2;margin:.2em 0 .4em}
+h1{font-size:30px}h2{font-size:24px}
+.card{background:#fff;border-radius:20px;padding:22px;box-shadow:0 8px 28px rgba(0,0,0,.12);animation:in .3s}
+@keyframes in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.bar{height:8px;background:rgba(0,0,0,.1);border-radius:8px;overflow:hidden;margin:6px 0 14px}
+.bar i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.meta{font-size:13px;letter-spacing:.06em;text-transform:uppercase;opacity:.7}
+.opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;margin-top:10px;padding:12px 14px;border:2px solid var(--line);border-radius:14px;background:#fff;font:inherit;font-size:16px;line-height:1.4;color:inherit;cursor:pointer}
+.ic{flex:0 0 68px;height:68px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:var(--sel);font-size:30px;line-height:1.1;text-align:center;word-break:keep-all}
+.opt:hover,.opt.sel{border-color:var(--accent);background:var(--sel)}
+.btn{display:block;width:100%;margin-top:16px;padding:15px;border:0;border-radius:14px;background:var(--accent);color:#fff;font:inherit;font-size:17px;font-weight:600;cursor:pointer}
+.link{background:none;border:0;color:inherit;opacity:.6;text-decoration:underline;font:inherit;font-size:13px;margin-top:18px;cursor:pointer}
+.tag{display:inline-block;padding:8px 16px;border-radius:30px;background:var(--accent);color:#fff;font-weight:700;letter-spacing:.05em;margin-bottom:10px}
+.big{font-size:17px;line-height:1.5}
+input{width:100%;padding:14px;font-size:18px;text-align:center;border:2px solid var(--line);border-radius:14px;text-transform:uppercase;letter-spacing:.12em;margin-top:12px}
+.err{color:#b3261e;height:20px;font-size:14px;margin-top:6px;text-align:center}
+.note{font-size:14px;opacity:.75;margin-top:14px}
+</style></head><body>
+<div class="wrap"><div id="app"></div></div>
+<script>
+// ===== Facilitators: change the Part 2 unlock code here =====
+const CODE = "AMNESIA";
+
+const P1 = [
+ {q:"Your morning starts…",o:["At an open-fronted kopi-tiam. Coffee is poured through a cloth sock over a charcoal grill, with kaya toast, and someone reads the paper aloud while everyone chips in","At the neighbourhood hawker centre. Kopi and toast, your phone for the news, a chat with the regular auntie","At a sunlit café. A flat white, a good book, a podcast, the hours entirely yours"]},
+ {q:"Your afternoon is…",o:["Swapping tall, embellished tales with young and old, heckled in good humour","A long lunch with friends, then keeping the stories going on the group chat","A pottery class or language lesson, ending the day with a new skill"]},
+ {q:"For fun, you’d…",o:["Bet on fighting fish left in a glass bottle overnight, or fighting spiders settled in seconds, with the whole kopi-tiam watching","Play cards or board games at a friend’s place","Join an escape room, a sports league or a concert with friends"]},
+ {q:"Your evening is…",o:["Gathered around the Rediffusion (“a cable radio network”) for the 9pm kungfu serial, finishing your coffee before the kopi-tiam closes at ten","Family dinner and a drama on TV","A gig or a rooftop bar, then the last MRT home"]},
+ {q:"Your neighbours are…",o:["Doors open from dawn till late, no fences or grilles, everyone knows everyone","Friendly nods and the odd chat at the void deck","Quiet and private, with friends you chose rather than ones you were assigned"]},
+ {q:"School should be…",o:["Easy-going, with no pressure and exams taken in stride","A steady mix of effort and play","Stimulating, with ambitious classmates and a clear path to a good career"]},
+ {q:"The community needs a school, generator or fire pump…",o:["Everyone pools donations and builds it, so it’s yours","A residents’ committee organises it, with funding and support from government agencies","Government agencies run it reliably; you pay your taxes and fees and get on with your life"]},
+ {q:"The pace of your life is…",o:["Leisurely and timeless, with tomorrow looking like today","A loose routine with room to wander","Full and purposeful, always heading somewhere"]}
+];
+const P2 = [
+ {t:"Time",o:["Free days with friends at the kopi-tiam, but no steady work or income","Casual work a few days a week and free afternoons at the kopi-tiam, but irregular income and nothing saved","A steady nine-to-six job and decent pay, with evenings and weekends your own, but few free weekday afternoons","A demanding career with high pay and fast progression, but long hours and little time for friends"]},
+ {t:"As a teen",o:["Leave school early, earn from petty jobs and enjoy the freedom, but without qualifications","Finish a few years of school, then take up odd jobs, with basic literacy but limited options","Stay through secondary school for a stable job, but with exams and less free time","Stay on to tertiary level with strong prospects, but years of exams, tuition and competition"]},
+ {t:"Leisure",o:["Free, open entertainment at the kopi-tiam, but only watching while others with money bet","Bet small sums on fish or spiders when you can spare a coin, but money is always tight","Afford the occasional paid outing on a modest salary, but fit it around work","Afford any leisure you choose, but only in short bursts around a demanding job"]},
+ {t:"Home",o:["Close-knit atap hut with family on your doorstep, but no electricity or modern sanitation, and one outhouse toilet shared among 28 people","A small kampung house with your own family close to the neighbours, but a shared outdoor toilet and basic amenities","A small HDB flat near relatives with modern amenities, but you see neighbours mostly in passing","A private flat with every comfort and full privacy, but you barely know your neighbours"]},
+ {t:"Electricity",o:["A community-run generator you built together, but with limited supply","A generator shared with neighbours, topped up by donations from better-off households, reliable on most evenings","Reliable state electricity with a monthly bill, but you have no say in how it’s run","Round-the-clock utilities with usage-based bills you must budget for, and a service hotline when something goes wrong"]},
+ {t:"Fire",o:["Equipment the community funded and everyone is responsible for, but it’s basic","Neighbours as first responders with community equipment, and the fire service for big blazes, but it takes time to arrive","A trained fire service on call with a quick response, but fewer neighbours involved","Smoke alarms, sprinklers and a trained fire service, but safety is entirely someone else’s job"]},
+ {t:"Schooling",o:["A community-run school with no pressure, but most children leave early","A community school where a few ambitious families push their children to continue, with no pressure on the rest","A state school with decent prospects and some exams, balancing effort and play","A standardised, competitive system with strong prospects, but a paper chase"]},
+ {t:"Future",o:["A life like your parents’, secure in what’s familiar, but with little change","A slightly better life than your parents’, with no pressure to chase it","Out-earn your parents steadily while keeping some balance","Out-earn your parents significantly, but constant pressure to stay excellent"]}
+];
+// Visuals: one emoji "scene" per option, in the same order as the options above
+const E1 = [["☕🍞📰","🍜📱","📖🎧"],["🗣️😄👴","🍽️💬","🏺📚"],["🐟🕷️👀","🃏🎲","🎤⚽"],["📻🥋☕","🍚📺","🎶🌃🚇"],["🚪🏘️🤝","👋🏢","🤫🏙️"],["😌📝","⚖️📚","🎓🚀"],["🤝🏫⚡","🏘️🤝🏛️","🏛️🧾"],["🌴🕰️","🚶🗓️","🏃📈"]];
+const E2 = [["☕🗣️","🔨☕","💼🌆","🏢📈"],["🚲🛠️","📖🔨","🏫💼","🎓📝"],["👀🐟","🪙🕷️","🍜🎬","🎟️⏳"],["🛖👨‍👩‍👧","🏡🪣","🏢🛋️","🏙️🔒"],["🔧💡","🛢️🤝","🏛️💡","🔌🧾"],["🧯🪣","👥🧯","🚒⏱️","🚨🏢"],["🏫🌴","🏫✏️","🏫📝","📚🏁"],["🏡🕰️","🌱🏡","📈⚖️","🚀😓"]];
+const T1 = [
+ {n:"Kampung Kia!",d:"Kopi-o in hand, doors open, no clock in sight. The kampung was made for you."},
+ {n:"Kampung at Heart",d:"You’d happily trade a few conveniences for a slower, closer way of life."},
+ {n:"City Slicker",d:"You like your space, your schedule and your skyline."}];
+const T2 = [
+ {n:"Verified Kampung Kia",d:"Still kampung after the reality check."},
+ {n:"Conflicted",d:"Kampung in spirit, city in practice."},
+ {n:"Urban Singaporean",d:"Once the costs were on the table, you chose the city."}];
+const tier1 = s => s >= 10 ? 0 : s >= 6 ? 1 : 2;
+const tier2 = s => s >= 16 ? 0 : s >= 9 ? 1 : 2;
+
+let S = {p1:null, p2:null, ok:false};
+try { S = Object.assign(S, JSON.parse(localStorage.getItem("kq") || "{}")); } catch(e) {}
+const save = () => { try { localStorage.setItem("kq", JSON.stringify(S)); } catch(e) {} };
+const app = document.getElementById("app");
+const show = (h, p2) => { document.body.className = p2 ? "p2" : ""; app.innerHTML = h; window.scrollTo(0,0); };
+const shuffle = a => { a = a.slice(); for (let i = a.length-1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } return a; };
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+
+function route() {
+  if (S.p2 !== null) return reveal();
+  if (S.p1 !== null) return S.ok ? intro2() : (S.seen1 ? locked() : result(1));
+  home();
+}
+function reset() { S = {p1:null,p2:null,ok:false}; save(); home(); }
+const resetLink = '<div style="text-align:center"><button class="link" onclick="reset()">Start over</button></div>';
+
+function home() {
+  show(`<div class="card"><span class="tag">QUIZ</span><h1>Kampung Kia or City Slicker?</h1>
+  <p class="big">Which Singapore were you made for? Eight quick questions. Go with your gut, there are no wrong answers.</p>
+  <button class="btn" onclick="run(1)">Start Part 1</button></div>`);
+}
+
+function run(part) {
+  const Q = part === 1 ? P1 : P2, pts = part === 1 ? [2,1,0] : [3,2,1,0];
+  let i = 0, score = 0;
+  (function next() {
+    if (i >= Q.length) { S[part === 1 ? "p1" : "p2"] = score; if (part === 1) S.seen1 = false; save(); return part === 1 ? result(1) : reveal(); }
+    const q = Q[i], opts = shuffle(q.o.map((t, k) => ({t, p: pts[k], e: (part === 1 ? E1 : E2)[i][k]})));
+    show(`<div class="meta">Part ${part}: ${part === 1 ? "The Kampung Dream" : "The Reality Check"} · ${i+1} of ${Q.length}</div>
+    <div class="bar"><i style="width:${i/Q.length*100}%"></i></div>
+    <div class="card"><h2>${part === 1 ? esc(q.q) : "Would you rather have…<br><small style='font-size:16px;opacity:.7'>" + esc(q.t) + "</small>"}</h2>
+    ${opts.map((o, k) => `<button class="opt" data-k="${k}"><span class="ic">${o.e}</span><span>${esc(o.t)}</span></button>`).join("")}</div>`, part === 2);
+    app.querySelectorAll(".opt").forEach(b => b.onclick = () => {
+      b.classList.add("sel"); score += opts[b.dataset.k].p; i++;
+      app.querySelectorAll(".opt").forEach(x => x.onclick = null);
+      setTimeout(next, 280);
+    });
+  })();
+}
+
+function result(n) {
+  const t = T1[tier1(S.p1)];
+  show(`<div class="card" style="text-align:center"><span class="tag">YOUR RESULT</span><h1>${t.n}</h1>
+  <p class="big">${t.d}</p><p class="note">Remember your result. Part 2 unlocks later in the seminar.</p>
+  <button class="btn" onclick="S.seen1=true;save();locked()">Continue</button></div>${resetLink}`);
+}
+
+function locked(err) {
+  show(`<div class="card" style="text-align:center"><span class="tag">PART 2</span><h2>🔒 Locked for now</h2>
+  <p class="big">Wait for your facilitators to share the code.</p>
+  <input id="code" placeholder="CODE" autocomplete="off" autocapitalize="characters">
+  <div class="err" id="err">${err || ""}</div>
+  <button class="btn" onclick="tryCode()" style="margin-top:6px">Unlock</button></div>${resetLink}`);
+}
+function tryCode() {
+  const v = document.getElementById("code").value.trim().toUpperCase();
+  if (v === CODE) { S.ok = true; save(); intro2(); } else document.getElementById("err").textContent = "That code doesn’t match. Try again.";
+}
+
+function intro2() {
+  show(`<div class="card"><span class="tag">PART 2</span><h1>The Reality Check</h1>
+  <p class="big">Same question, plainer lens. Each choice has a real upside and a real cost. Pick the life you would rather live.</p>
+  <button class="btn" onclick="run(2)">Start Part 2</button></div>${resetLink}`, true);
+}
+
+function reveal() {
+  const a = tier1(S.p1), b = tier2(S.p2), k1 = a <= 1, v2 = b === 0;
+  let tag, msg;
+  if (k1 && !v2) { tag = "SWITCHED SIDES"; msg = `You went from <b>${T1[a].n}</b> → <b>${T2[b].n}</b>. What changed?<br><br>The costs were there all along. Chua calls kampung nostalgia “intentional partial amnesia” (p. 155).`; }
+  else if (k1 && v2) { tag = "HELD FIRM"; msg = `You chose the kampung even with the costs in view. Chua reads nostalgia as an “immanent critique of the present” (p. 156): what you pick shows what today lacks.`; }
+  else if (v2) { tag = "REVERSE SWITCH"; msg = `You started on the city side but chose the kampung once the trade-offs were explicit. Why?`; }
+  else { tag = "CITY ALL ALONG"; msg = `You never bought the rose-tinted version. What made it easy to resist?`; }
+  show(`<div class="card" style="text-align:center"><span class="tag" style="font-size:20px">${tag}</span>
+  <p class="big">Part 1: <b>${T1[a].n}</b><br>Part 2: <b>${T2[b].n}</b></p>
+  <p class="big" style="text-align:left">${msg}</p>
+  <p class="note">Keep this screen open. Your facilitators will ask for a show of hands.</p></div>${resetLink}`, true);
+}
+route();
+</script></body></html>
