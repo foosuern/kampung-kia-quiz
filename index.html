@@ -25,6 +25,9 @@ h1{font-size:30px}h2{font-size:24px}
 input{width:100%;padding:14px;font-size:18px;text-align:center;border:2px solid var(--line);border-radius:14px;text-transform:uppercase;letter-spacing:.12em;margin-top:12px}
 .err{color:#b3261e;height:20px;font-size:14px;margin-top:6px;text-align:center}
 .note{font-size:14px;opacity:.75;margin-top:14px}
+.hero{border-radius:20px;overflow:hidden;box-shadow:0 8px 28px rgba(0,0,0,.18);margin-bottom:14px;animation:in .3s}
+.hero svg{display:block;width:100%;height:210px}
+.hero text{font:700 12px system-ui,sans-serif;fill:#fff;letter-spacing:.06em}
 </style></head><body>
 <div class="wrap"><div id="app"></div></div>
 <script>
@@ -82,9 +85,29 @@ function reset() { S = {p1:null,p2:null,ok:false}; save(); home(); }
 const resetLink = '<div style="text-align:center"><button class="link" onclick="reset()">Start over</button></div>';
 
 function home() {
-  show(`<div class="card"><span class="tag">QUIZ</span><h1>Kampung Kia or City Slicker?</h1>
+  show(`<div class="hero"><svg viewBox="0 0 560 220" preserveAspectRatio="xMidYMid slice" role="img" aria-label="A kampung with atap huts and a palm on the left, and HDB blocks, towers and an MRT train on the right">
+<defs><linearGradient id="gl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFC878"/><stop offset="1" stop-color="#FFF1D6"/></linearGradient>
+<linearGradient id="gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2B4B6F"/><stop offset="1" stop-color="#9DBBD1"/></linearGradient>
+<clipPath id="cr"><polygon points="300,0 560,0 560,220 260,220"/></clipPath></defs>
+<rect width="560" height="220" fill="url(#gl)"/><circle cx="70" cy="62" r="28" fill="#F6B24A"/>
+<rect y="172" width="560" height="48" fill="#8DB36A"/>
+<rect x="40" y="140" width="70" height="34" fill="#C99A5B"/><polygon points="28,144 75,100 122,144" fill="#7C5A2C"/><rect x="66" y="152" width="14" height="22" fill="#5D431F"/>
+<rect x="142" y="152" width="56" height="22" fill="#C99A5B"/><polygon points="134,155 170,124 206,155" fill="#7C5A2C"/><rect x="162" y="160" width="12" height="14" fill="#5D431F"/>
+<path d="M232 176L228 112" stroke="#6B4A24" stroke-width="4" fill="none"/><path d="M228 112q-24-6-34 12M228 112q24-6 30 12M228 112q-6-22-26-26M228 112q8-22 28-24" stroke="#3F8A3C" stroke-width="5" fill="none" stroke-linecap="round"/>
+<g clip-path="url(#cr)"><rect width="560" height="220" fill="url(#gr)"/>
+<rect x="326" y="62" width="60" height="114" fill="#C8D3DB"/><path d="M334 78h44M334 94h44M334 110h44M334 126h44M334 142h44" stroke="#7FA6C2" stroke-width="7" stroke-dasharray="8 5"/>
+<rect x="398" y="28" width="46" height="148" fill="#8FA1AE"/><path d="M406 44h30M406 60h30M406 76h30M406 92h30M406 108h30M406 124h30" stroke="#DCE7EE" stroke-width="6" stroke-dasharray="6 5" opacity=".85"/>
+<rect x="456" y="72" width="38" height="104" fill="#B5C3CD"/><path d="M462 88h26M462 104h26M462 120h26M462 136h26" stroke="#7FA6C2" stroke-width="6" stroke-dasharray="6 5"/>
+<rect x="500" y="92" width="60" height="84" fill="#C8D3DB"/><path d="M508 106h44M508 122h44M508 138h44" stroke="#7FA6C2" stroke-width="7" stroke-dasharray="8 5"/>
+<rect x="260" y="176" width="300" height="44" fill="#6B8396"/>
+<rect x="385" y="168" width="110" height="18" rx="7" fill="#fff"/><rect x="385" y="178" width="110" height="3" fill="#E0453A"/><path d="M393 173h94" stroke="#7FA6C2" stroke-width="5" stroke-dasharray="10 5"/></g>
+<path d="M300 0L260 220" stroke="#fff" stroke-width="3" opacity=".85"/>
+<circle cx="280" cy="108" r="18" fill="#fff"/><text x="280" y="113" text-anchor="middle" style="fill:#3a2a14;font-size:13px">VS</text>
+<text x="16" y="204">1960s KAMPUNG</text><text x="544" y="204" text-anchor="end">TODAY’S CITY</text></svg></div>
+  <div class="card" style="text-align:center"><span class="tag">QUIZ</span><h1>Kampung Kia or City Slicker?</h1>
   <p class="big">Which Singapore were you made for? Eight quick questions. Go with your gut, there are no wrong answers.</p>
-  <button class="btn" onclick="run(1)">Start Part 1</button></div>`);
+  <button class="btn" onclick="run(1)">Start Part 1</button>
+  <p class="note">Part 1 takes about two minutes. Part 2 unlocks later in the seminar.</p></div>`);
 }
 
 function run(part) {
