@@ -28,6 +28,8 @@ input{width:100%;padding:14px;font-size:18px;text-align:center;border:2px solid 
 .hero{border-radius:20px;overflow:hidden;box-shadow:0 8px 28px rgba(0,0,0,.18);margin-bottom:14px;animation:in .3s}
 .hero svg{display:block;width:100%;height:210px}
 .hero text{font:700 12px system-ui,sans-serif;fill:#fff;letter-spacing:.06em}
+details{margin-top:16px;text-align:left;font-size:14px;line-height:1.5}summary{cursor:pointer;opacity:.75;text-decoration:underline;text-align:center}details p{margin:.7em 0}
+details table{width:100%;border-collapse:collapse;margin:10px 0}details td,details th{border:1px solid var(--line);padding:7px 10px;text-align:left}details th{background:var(--sel)}details td:first-child{white-space:nowrap;width:1%}
 </style></head><body>
 <div class="wrap"><div id="app"></div></div>
 <script>
@@ -131,7 +133,7 @@ function run(part) {
 
 function result(n) {
   const t = T1[tier1(S.p1)];
-  show(`<div class="card" style="text-align:center"><span class="tag">YOUR RESULT</span><h1>${t.n}</h1>
+  show(`<div class="card" style="text-align:center"><span class="tag">YOUR RESULT</span><h1>${t.n}</h1><p class="note" style="margin:-4px 0 10px"><b>Your score: ${S.p1} / 16</b></p><div class="note" style="margin:0 0 12px;line-height:1.7"><span style="font-family:Georgia,serif;font-style:italic;font-size:16px;text-decoration:underline">Score ranges</span><br>${["10–16","6–9","0–5"].map((r, i) => `<span style="${i === tier1(S.p1) ? "font-weight:700;opacity:1" : ""}">${r}: ${T1[i].n}</span>`).join("<br>")}</div>
   <p class="big">${t.d}</p><p class="note">Remember your result. Part 2 unlocks later in the seminar.</p>
   <button class="btn" onclick="S.seen1=true;save();locked()">Continue</button></div>${resetLink}`);
 }
@@ -162,9 +164,14 @@ function reveal() {
   else if (v2) { tag = "REVERSE SWITCH"; msg = `You started on the city side but chose the kampung once the trade-offs were explicit. Why?`; }
   else { tag = "CITY ALL ALONG"; msg = `You never bought the rose-tinted version. What made it easy to resist?`; }
   show(`<div class="card" style="text-align:center"><span class="tag" style="font-size:20px">${tag}</span>
-  <p class="big">Part 1: <b>${T1[a].n}</b><br>Part 2: <b>${T2[b].n}</b></p>
+  <p class="big">Part 1: <b>${T1[a].n}</b> (${S.p1} / 16)<br>Part 2: <b>${T2[b].n}</b> (${S.p2} / 24)</p>
   <p class="big" style="text-align:left">${msg}</p>
-  <p class="note">Keep this screen open. Your facilitators will ask for a show of hands.</p></div>${resetLink}`, true);
+  <p class="note">Keep this screen open. Your facilitators will ask for a show of hands.</p><details><summary>How was this scored?</summary>
+  <p>Each answer earns points by how close it is to the kampung end: 0–2 per question in Part 1 and 0–3 per question in Part 2.</p>
+  <table><tr><th colspan="2">Part 1 (max 16)</th></tr><tr><td>10–16</td><td>Kampung Kia</td></tr><tr><td>6–9</td><td>Kampung at Heart</td></tr><tr><td>0–5</td><td>City Slicker</td></tr>
+  <tr><th colspan="2">Part 2 (max 24)</th></tr><tr><td>16–24</td><td>Verified Kampung Kia</td></tr><tr><td>9–15</td><td>Conflicted</td></tr><tr><td>0–8</td><td>Urban Singaporean</td></tr></table>
+  <p><b>Switch rule</b><br>Kampung side in Part 1 means <i>Kampung Kia</i> or <i>Kampung at Heart</i>. Kampung side in Part 2 means <i>Verified Kampung Kia</i> only. Moving from the kampung side to any other result counts as switched.</p>
+  <p>These cut-offs are our own judgement calls, so treat your result as a prompt for discussion, not a measurement.</p></details></div>${resetLink}`, true);
 }
 route();
 </script></body></html>
