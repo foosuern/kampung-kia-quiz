@@ -49,10 +49,10 @@ const P2 = [
  {t:"As a teen",o:["Leave school early, earn from petty jobs and enjoy the freedom, but without qualifications","Finish a few years of school, then take up odd jobs, with basic literacy but limited options","Stay through secondary school for a stable job, but with exams and less free time","Stay on to tertiary level with strong prospects, but years of exams, tuition and competition"]},
  {t:"Leisure",o:["Listen to the Rediffusion at the kopi-tiam every day, but you’re unemployed with no income to spend on anything else","Bet small sums on fish or spiders when you can spare a coin, but money is always tight","Afford the occasional paid outing on a modest salary, but fit it around work","Afford any leisure you choose, but only in short bursts around a demanding job"]},
  {t:"Home",o:["Close-knit atap hut with family on your doorstep, but no electricity or modern sanitation, and one outhouse toilet shared among 28 people","A small kampung house with your own family close to the neighbours, but a shared outdoor toilet and basic amenities","A small HDB flat near relatives with modern amenities, but you see neighbours mostly in passing","A private flat with every comfort and full privacy, but you barely know your neighbours"]},
- {t:"Electricity",o:["A community-run generator you built together, but with limited supply","A generator shared with neighbours, topped up by donations from better-off households, reliable on most evenings","Reliable state electricity with a monthly bill, but you have no say in how it’s run","Round-the-clock utilities with usage-based bills you must budget for, and a service hotline when something goes wrong"]},
+ {t:"Electricity",o:["A community-run generator you built together, but with limited supply","A generator shared with neighbours and topped up by donations from better-off households, but only reliable on most evenings","Reliable state electricity with a monthly bill, but you have no say in how it’s run","Round-the-clock utilities and a service hotline when something goes wrong, but usage-based bills you must budget for"]},
  {t:"Fire",o:["Equipment the community funded and everyone is responsible for, but it’s basic","Neighbours as first responders with community equipment, and the fire service for big blazes, but it takes time to arrive","A trained fire service on call with a quick response, but fewer neighbours involved","Smoke alarms, sprinklers and a trained fire service, but safety is entirely someone else’s job"]},
- {t:"Schooling",o:["A community-run school with no pressure, but most children leave early","A community school where a few ambitious families push their children to continue, with no pressure on the rest","A state school with decent prospects and some exams, balancing effort and play","A standardised, competitive system with strong prospects, but a paper chase"]},
- {t:"Future",o:["A life like your parents’, secure in what’s familiar, but with little change","A slightly better life than your parents’, with no pressure to chase it","Out-earn your parents steadily while keeping some balance","Out-earn your parents significantly, but constant pressure to stay excellent"]}
+ {t:"Schooling",o:["A community-run school with no pressure, but most children leave early","A community school where a few ambitious families push their children to continue, but with no pressure on the rest","A state school with decent prospects and a balance of effort and play, but with some exams","A standardised, competitive system with strong prospects, but a paper chase"]},
+ {t:"Future",o:["A life like your parents’, secure in what’s familiar, but with little change","A slightly better life than your parents’, but with no pressure to chase it","Out-earn your parents steadily, but with only some balance left over","Out-earn your parents significantly, but constant pressure to stay excellent"]}
 ];
 // Visuals: one emoji "scene" per option, in the same order as the options above
 const E1 = [["☕🍞📰","🍜📱","📖🎧"],["🗣️😄👴","🍽️💬","🏺📚"],["🐟🕷️👀","🃏🎲","🎤⚽"],["📻🥋☕","🍚📺","🎶🌃🚇"],["🚪🏘️🤝","👋🏢","🤫🏙️"],["😌📝","⚖️📚","🎓🚀"],["🤝🏫⚡","🏘️🤝🏛️","🏛️🧾"],["🌴🕰️","🚶🗓️","🏃📈"]];
@@ -110,6 +110,7 @@ function home() {
   <p class="note">Part 1 takes about two minutes. Part 2 unlocks later in the seminar.</p></div>`);
 }
 
+const cost = t => t.replace(/(,\s*)?\b(but\b.*)$/, '$1<b><i>$2</i></b>');
 function run(part) {
   const Q = part === 1 ? P1 : P2, pts = part === 1 ? [2,1,0] : [3,2,1,0];
   let i = 0, score = 0;
@@ -119,7 +120,7 @@ function run(part) {
     show(`<div class="meta">Part ${part}: ${part === 1 ? "The Kampung Dream" : "The Reality Check"} · ${i+1} of ${Q.length}</div>
     <div class="bar"><i style="width:${i/Q.length*100}%"></i></div>
     <div class="card"><h2>${part === 1 ? esc(q.q) : "Would you rather have…<br><small style='font-size:16px;opacity:.7'>" + esc(q.t) + "</small>"}</h2>
-    ${opts.map((o, k) => `<button class="opt" data-k="${k}"><span class="ic">${o.e}</span><span>${esc(o.t)}</span></button>`).join("")}</div>`, part === 2);
+    ${opts.map((o, k) => `<button class="opt" data-k="${k}"><span class="ic">${o.e}</span><span>${part === 2 ? cost(esc(o.t)) : esc(o.t)}</span></button>`).join("")}</div>`, part === 2);
     app.querySelectorAll(".opt").forEach(b => b.onclick = () => {
       b.classList.add("sel"); score += opts[b.dataset.k].p; i++;
       app.querySelectorAll(".opt").forEach(x => x.onclick = null);
