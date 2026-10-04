@@ -30,6 +30,9 @@ input{width:100%;padding:14px;font-size:18px;text-align:center;border:2px solid 
 .hero text{font:700 12px system-ui,sans-serif;fill:#fff;letter-spacing:.06em}
 details{margin-top:16px;text-align:left;font-size:14px;line-height:1.5}summary{cursor:pointer;opacity:.75;text-decoration:underline;text-align:center}details p{margin:.7em 0}
 details table{width:100%;border-collapse:collapse;margin:10px 0}details td,details th{border:1px solid var(--line);padding:7px 10px;text-align:left}details th{background:var(--sel)}details td:first-child{white-space:nowrap;width:1%}
+.back{background:none;border:2px solid var(--line);border-radius:12px;padding:10px 16px;font:inherit;font-size:15px;color:inherit;cursor:pointer;margin-top:14px}
+details ul{margin:.2em 0 .8em;padding-left:1.3em}details li{margin:.3em 0}
+.gfx{font-size:56px;line-height:1.2;background:var(--sel);border-radius:18px;padding:12px;margin-bottom:12px;letter-spacing:6px}
 </style></head><body>
 <div class="wrap"><div id="app"></div></div>
 <script>
@@ -67,6 +70,8 @@ const T2 = [
  {n:"Verified Kampung Kia",d:"Still kampung after the reality check."},
  {n:"Conflicted",d:"Kampung in spirit, city in practice."},
  {n:"Urban Singaporean",d:"Once the costs were on the table, you chose the city."}];
+const G1 = ["🛖☕🌴","🏘️🌿☕","🏙️📅"];
+const GX = {"HELD FIRM":"🛖💪","PARTIAL SWITCH":"🛖🌗🏙️","FULL SWITCH":"🛖➡️🏙️","PARTIAL REVERSE SWITCH":"🏙️🌗🛖","FULL REVERSE SWITCH":"🏙️➡️🛖","CITY ALL ALONG":"🏙️🚇✨"};
 const tier1 = s => s >= 10 ? 0 : s >= 6 ? 1 : 2;
 const tier2 = s => s >= 16 ? 0 : s >= 9 ? 1 : 2;
 
@@ -115,25 +120,32 @@ function home() {
 const cost = t => t.replace(/(,\s*)?\b(but\b.*)$/, '$1<b><i>$2</i></b>');
 function run(part) {
   const Q = part === 1 ? P1 : P2, pts = part === 1 ? [2,1,0] : [3,2,1,0];
-  let i = 0, score = 0;
-  (function next() {
-    if (i >= Q.length) { S[part === 1 ? "p1" : "p2"] = score; if (part === 1) S.seen1 = false; save(); return part === 1 ? result(1) : reveal(); }
-    const q = Q[i], opts = shuffle(q.o.map((t, k) => ({t, p: pts[k], e: (part === 1 ? E1 : E2)[i][k]})));
+  const shown = [], ans = [];
+  let i = 0;
+  function next() {
+    if (i >= Q.length) { const score = ans.reduce((a, b) => a + b, 0); S[part === 1 ? "p1" : "p2"] = score; if (part === 1) S.seen1 = false; save(); return part === 1 ? result(1) : reveal(); }
+    const q = Q[i];
+    if (!shown[i]) shown[i] = shuffle(q.o.map((t, k) => ({t, p: pts[k], e: (part === 1 ? E1 : E2)[i][k]})));
+    const opts = shown[i];
     show(`<div class="meta">Part ${part}: ${part === 1 ? "The Kampung Dream" : "The Reality Check"} · ${i+1} of ${Q.length}</div>
     <div class="bar"><i style="width:${i/Q.length*100}%"></i></div>
     <div class="card"><h2>${part === 1 ? esc(q.q) : "Would you rather have…<br><small style='font-size:16px;opacity:.7'>" + esc(q.t) + "</small>"}</h2>
-    ${opts.map((o, k) => `<button class="opt" data-k="${k}"><span class="ic">${o.e}</span><span>${part === 2 ? cost(esc(o.t)) : esc(o.t)}</span></button>`).join("")}</div>`, part === 2);
+    ${opts.map((o, k) => `<button class="opt${ans[i] === o.p ? " sel" : ""}" data-k="${k}"><span class="ic">${o.e}</span><span>${part === 2 ? cost(esc(o.t)) : esc(o.t)}</span></button>`).join("")}</div>
+    ${i > 0 ? '<button class="back" id="back">← Back to previous question</button>' : ""}`, part === 2);
     app.querySelectorAll(".opt").forEach(b => b.onclick = () => {
-      b.classList.add("sel"); score += opts[b.dataset.k].p; i++;
+      b.classList.add("sel"); ans[i] = opts[b.dataset.k].p; i++;
       app.querySelectorAll(".opt").forEach(x => x.onclick = null);
       setTimeout(next, 280);
     });
-  })();
+    const bk = document.getElementById("back");
+    if (bk) bk.onclick = () => { i--; next(); };
+  }
+  next();
 }
 
 function result(n) {
   const t = T1[tier1(S.p1)];
-  show(`<div class="card" style="text-align:center"><span class="tag">YOUR RESULT</span><h1>${t.n}</h1><p class="note" style="margin:-4px 0 10px"><b>Your score: ${S.p1} / 16</b></p><div class="note" style="margin:0 0 12px;line-height:1.7"><span style="font-family:Georgia,serif;font-style:italic;font-size:16px;text-decoration:underline">Score ranges</span><br>${["10–16","6–9","0–5"].map((r, i) => `<span style="${i === tier1(S.p1) ? "font-weight:700;opacity:1" : ""}">${r}: ${T1[i].n}</span>`).join("<br>")}</div>
+  show(`<div class="card" style="text-align:center"><div class="gfx">${G1[tier1(S.p1)]}</div><span class="tag">YOUR RESULT</span><h1>${t.n}</h1><p class="note" style="margin:-4px 0 10px"><b>Your score: ${S.p1} / 16</b></p><div class="note" style="margin:0 0 12px;line-height:1.7"><span style="font-family:Georgia,serif;font-style:italic;font-size:16px;text-decoration:underline">Score Ranges</span><br>${["10–16","6–9","0–5"].map((r, i) => `<span style="${i === tier1(S.p1) ? "font-weight:700;opacity:1" : ""}">${r}: ${T1[i].n}</span>`).join("<br>")}</div>
   <p class="big">${t.d}</p><p class="note">Remember your result. Part 2 unlocks later in the seminar.</p>
   <button class="btn" onclick="S.seen1=true;save();locked()">Continue</button></div>${resetLink}`);
 }
@@ -143,7 +155,7 @@ function locked(err) {
   <p class="big">Wait for your facilitators to share the code.</p>
   <input id="code" placeholder="CODE" autocomplete="off" autocapitalize="characters">
   <div class="err" id="err">${err || ""}</div>
-  <button class="btn" onclick="tryCode()" style="margin-top:6px">Unlock</button></div>${resetLink}`);
+  <button class="btn" onclick="tryCode()" style="margin-top:6px">Unlock</button></div><div style="text-align:center"><button class="back" onclick="result(1)">← Back to your result</button></div>${resetLink}`);
 }
 function tryCode() {
   const v = document.getElementById("code").value.trim().toUpperCase();
@@ -159,18 +171,25 @@ function intro2() {
 function reveal() {
   const a = tier1(S.p1), b = tier2(S.p2), k1 = a <= 1, v2 = b === 0;
   let tag, msg;
-  if (k1 && !v2) { tag = "SWITCHED SIDES"; msg = `You went from <b>${T1[a].n}</b> → <b>${T2[b].n}</b>. What changed?<br><br>The costs were there all along. Chua calls kampung nostalgia “intentional partial amnesia” (p. 155).`; }
-  else if (k1 && v2) { tag = "HELD FIRM"; msg = `You chose the kampung even with the costs in view. Chua reads nostalgia as an “immanent critique of the present” (p. 156): what you pick shows what today lacks.`; }
-  else if (v2) { tag = "REVERSE SWITCH"; msg = `You started on the city side but chose the kampung once the trade-offs were explicit. Why?`; }
+  const from = `You went from <b>${T1[a].n}</b> → <b>${T2[b].n}</b>.`;
+  if (k1 && b === 1) { tag = "PARTIAL SWITCH"; msg = `${from} Kampung in spirit, city in practice. Which costs pulled you away?<br><br>Chua calls kampung nostalgia “intentional partial amnesia” (p. 155).`; }
+  else if (k1 && b === 2) { tag = "FULL SWITCH"; msg = `${from} What changed?<br><br>The costs were there all along. Chua calls kampung nostalgia “intentional partial amnesia” (p. 155).`; }
+  else if (k1) { tag = "HELD FIRM"; msg = `You chose the kampung even with the costs in view. Chua reads nostalgia as an “immanent critique of the present” (p. 156): what you pick shows what today lacks.`; }
+  else if (b === 1) { tag = "PARTIAL REVERSE SWITCH"; msg = `You started on the city side, but the kampung gained ground once the trade-offs were explicit. What pulled you towards it?`; }
+  else if (b === 0) { tag = "FULL REVERSE SWITCH"; msg = `You started on the city side but chose the kampung once the trade-offs were explicit. Why?`; }
   else { tag = "CITY ALL ALONG"; msg = `You never bought the rose-tinted version. What made it easy to resist?`; }
-  show(`<div class="card" style="text-align:center"><span class="tag" style="font-size:20px">${tag}</span>
+  show(`<div class="card" style="text-align:center"><div class="gfx">${GX[tag]}</div><span class="tag" style="font-size:18px">${tag}</span>
   <p class="big">Part 1: <b>${T1[a].n}</b> (${S.p1} / 16)<br>Part 2: <b>${T2[b].n}</b> (${S.p2} / 24)</p>
   <p class="big" style="text-align:left">${msg}</p>
   <p class="note">Keep this screen open. Your facilitators will ask for a show of hands.</p><details><summary>How was this scored?</summary>
   <p>Each answer earns points by how close it is to the kampung end: 0–2 per question in Part 1 and 0–3 per question in Part 2.</p>
   <table><tr><th colspan="2">Part 1 (max 16)</th></tr><tr><td>10–16</td><td>Kampung Kia</td></tr><tr><td>6–9</td><td>Kampung at Heart</td></tr><tr><td>0–5</td><td>City Slicker</td></tr>
   <tr><th colspan="2">Part 2 (max 24)</th></tr><tr><td>16–24</td><td>Verified Kampung Kia</td></tr><tr><td>9–15</td><td>Conflicted</td></tr><tr><td>0–8</td><td>Urban Singaporean</td></tr></table>
-  <p><b>Switch rule</b><br>Kampung side in Part 1 means <i>Kampung Kia</i> or <i>Kampung at Heart</i>. Kampung side in Part 2 means <i>Verified Kampung Kia</i> only. Moving from the kampung side to any other result counts as switched.</p>
+  <p><b>Switch rule</b></p>
+  <p>From the kampung side in Part 1 (<i>Kampung Kia</i> or <i>Kampung at Heart</i>):</p>
+  <ul><li><i>Verified Kampung Kia</i> is held firm.</li><li><i>Conflicted</i> is a <b>partial switch</b>.</li><li><i>Urban Singaporean</i> is a <b>full switch</b>.</li></ul>
+  <p>From <i>City Slicker</i>:</p>
+  <ul><li><i>Conflicted</i> is a <b>partial reverse switch</b>.</li><li><i>Verified Kampung Kia</i> is a <b>full reverse switch</b>.</li><li><i>Urban Singaporean</i> is city all along.</li></ul>
   <p>These cut-offs are our own judgement calls, so treat your result as a prompt for discussion, not a measurement.</p></details></div>${resetLink}`, true);
 }
 route();
